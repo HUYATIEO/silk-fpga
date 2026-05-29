@@ -39,13 +39,13 @@ Hệ thống nhận diện chế độ làm việc của bạn thông qua một 
 3. Copy các tệp mã nguồn thiết kế (`.v`, `.sv`) của bạn vào đây. Giữ nguyên file `project.v` (Tham khảo I/O port từ các thư mục mẫu).
 4. Mở tệp `mode.txt` có sẵn, chỉnh sửa thành chế độ ngoại vi bạn làm (Ví dụ: `VGA`).
 5. **Commit & Push** code lên nhánh chính của bạn, nghĩa là thay đổi nội dung bên trong thư mục của bạn rồi lưu lại với 'commit change' để workflow chạy.
-6. Sang tab **Actions** trên GitHub, đợi chạy xong, bạn chọn lần gần nhất push thành công (dấu tick) và tải tệp nén `.zip` ở cuối workflow **SILK FPGA - Auto Compile JS**. Giải nén ra bạn sẽ có file `.js' sẵn sàng để kéo thả nạp lên trang web.
-7. Workflow chỉ chạy khi có sự thay đổi trong thư mục 'your_moudule'.
+6. Sang tab **Actions** trên GitHub, đợi chạy xong, chọn action **SILK FPGA - Auto Compile JS** ở bên trái, bạn chọn lần gần nhất push thành công (tick xanh trên cùng) và tải tệp nén `.zip` ở cuối workflow. Giải nén ra bạn sẽ có file `.js' sẵn sàng để kéo thả nạp lên trang web.
+7. Workflow chỉ chạy khi phát hiện có sự thay đổi trong thư mục 'your_moudule'.
 ---
 
 ## 2. Thư mục `generic` (Báo cáo RTL)
 
-Thư mục này hoạt động như một máy trạm EDA thu nhỏ chạy trên Cloud, tích hợp sâu bộ công cụ mã nguồn mở. Nhiệm vụ chính là phân tích, kiểm thử và trực quan hóa thiết kế phần cứng của bạn ngay khi push code mà không cần cài đặt.
+Thư mục này hoạt động như một máy trạm EDA thu nhỏ chạy trên Cloud, tích hợp các bộ công cụ mã nguồn mở. Nhiệm vụ chính là phân tích, kiểm thử và trực quan hóa thiết kế phần cứng của bạn ngay khi push code mà không cần cài đặt rườm rà.
 
 ### 📁 Cấu trúc thư mục bắt buộc
 Để pipeline không bị lỗi, cấu trúc thư mục của bạn bên trong `generic/` phải chuẩn chỉ như sau:
@@ -75,5 +75,5 @@ TB_NAME = ten_file_testbench_cua_ban
 ```
 
 5. **Commit & Push** code lên nhánh chính của bạn, nghĩa là thay đổi nội dung bên trong các thư mục rồi lưu lại với commit change để workflow chạy.
-6. Sang tab **Actions** trên GitHub, đợi chạy xong, bạn chọn lần push thành công gần nhất (dấu tick trên cùng) và xem thông số workflow **SILK EDA - General Check**.
-7. Workflow chỉ chạy khi có sự thay đổi trong 1 trong các thư mục 'rtl', 'tb' hoặc config.txt. 
+6. Sang tab **Actions** trên GitHub, đợi chạy xong, chọn action **SILK EDA - General Check** ở bên trái, bạn chọn lần gần nhất push thành công (tick xanh trên cùng) và kéo xuống để xem báo cáo.
+8. Workflow chỉ chạy khi phát hiện có sự thay đổi tại 1 trong các thư mục 'rtl', 'tb' hoặc config.txt. 
