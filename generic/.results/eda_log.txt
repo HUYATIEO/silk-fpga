@@ -3,21 +3,18 @@
 ✅ Testbench: tb_systolic2x2
 === 1/4: Đang kiểm tra lỗi cú pháp và logic (Linting) ===
 /usr/local/bin/entrypoint.sh: line 23: 1: command not found
-✅ Code RTL vượt qua Verilator Linting.
-=== 1/4: Đang tạo Module Documentation ===
-=== 2/4: Đang tổng hợp Netlist và FSM bằng Yosys ===
-=== 3/4: Đang vẽ Schematic và FSM ===
-=== 4/4: Đang mô phỏng ===
-VCD info: dumpfile sim/waveform.vcd opened for output.
-----------------------------------------
-Time: 80000 | Negedge Data Push Test Results:
-Matrix C = A * B
-Calculated C = [  3    7]
-               [  5   12]
-Expected   C = [3   7]
-               [5  12]
-Status: PASSED
-----------------------------------------
-tb/tb_systolic2x2.v:88: $finish called at 100000 (1ps)
-✅ Đã tạo Waveform trong thư mục sim/
-🎉 HOÀN TẤT !
+%Error: rtl/systolic2x2.v:15:5: syntax error, unexpected output, expecting ','
+   15 |     output [8:0] c11
+      |     ^~~~~~
+%Error: rtl/systolic2x2.v:19:3: syntax error, unexpected always
+   19 |   always @(posedge clk)
+      |   ^~~~~~
+%Error: rtl/systolic2x2.v:32:3: syntax error, unexpected always
+   32 |   always @*
+      |   ^~~~~~
+%Error: rtl/systolic2x2.v:76:3: syntax error, unexpected IDENTIFIER
+   76 |   pe pe00
+      |   ^~
+%Error: Exiting due to 4 error(s)
+❌ LỖI: Có lỗi rồi!
+Hãy đọc kỹ log cảnh báo (Error/Warning) ở trên, sửa lỗi và push lại.
