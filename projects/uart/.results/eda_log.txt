@@ -7,6 +7,5 @@
       |          ^~~~~~~~
                           ... For warning description see https://verilator.org/warn/PINCONNECTEMPTY?v=5.020
                           ... Use "/* verilator lint_off PINCONNECTEMPTY */" and lint_on around source to disable this message.
-%Error: Specified --top-module 'uart' was not found in design.
-%Error: Exiting due to 1 error(s), 1 warning(s)
+%Error: Exiting due to 1 warning(s)
 🛑 Hãy đọc kỹ log cảnh báo (Error/Warning) ở trên, sửa lỗi và push lại.
