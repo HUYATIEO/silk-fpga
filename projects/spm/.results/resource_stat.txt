@@ -1,0 +1,284 @@
+5. Printing statistics.
+
+=== CSADD ===
+
+   Number of wires:                 17
+   Number of wire bits:             17
+   Number of public wires:          10
+   Number of public wire bits:      10
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  7
+     $adff                           2
+     $and                            2
+     $xor                            3
+
+=== TCMP ===
+
+   Number of wires:                  9
+   Number of wire bits:              9
+   Number of public wires:           5
+   Number of public wire bits:       5
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     $adff                           2
+     $or                             1
+     $xor                            1
+
+=== spm ===
+
+   Number of wires:                 39
+   Number of wire bits:            131
+   Number of public wires:           7
+   Number of public wire bits:      99
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 64
+     $and                           32
+     CSADD                          31
+     TCMP                            1
+
+=== design hierarchy ===
+
+   spm                               1
+     CSADD                          31
+     TCMP                            1
+
+   Number of wires:                575
+   Number of wire bits:            667
+   Number of public wires:         322
+   Number of public wire bits:     414
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                253
+     $adff                          64
+     $and                           94
+     $or                             1
+     $xor                           94
+
+6. Executing PREP pass.
+
+6.1. Executing HIERARCHY pass (managing design hierarchy).
+
+6.1.1. Analyzing design hierarchy..
+Top module:  \spm
+Used module:     \CSADD
+Used module:     \TCMP
+
+6.1.2. Analyzing design hierarchy..
+Top module:  \spm
+Used module:     \CSADD
+Used module:     \TCMP
+Removed 0 unused modules.
+
+6.2. Executing PROC pass (convert processes to netlists).
+
+6.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+6.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+6.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+6.2.4. Executing PROC_INIT pass (extract init attributes).
+
+6.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+6.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+6.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+
+6.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+6.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+6.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+6.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+6.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module CSADD.
+Optimizing module TCMP.
+Optimizing module spm.
+
+6.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module CSADD.
+Optimizing module TCMP.
+Optimizing module spm.
+
+6.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \CSADD..
+Finding unused cells or wires in module \TCMP..
+Finding unused cells or wires in module \spm..
+Removed 0 unused cells and 9 unused wires.
+<suppressed ~3 debug messages>
+
+6.5. Executing CHECK pass (checking for obvious problems).
+Checking module CSADD...
+Checking module TCMP...
+Checking module spm...
+Found and reported 0 problems.
+
+6.6. Executing OPT pass (performing simple optimizations).
+
+6.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module CSADD.
+Optimizing module TCMP.
+Optimizing module spm.
+
+6.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\CSADD'.
+Finding identical cells in module `\TCMP'.
+Finding identical cells in module `\spm'.
+Removed a total of 0 cells.
+
+6.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \CSADD..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \TCMP..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \spm..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+6.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \CSADD.
+  Optimizing cells in module \TCMP.
+  Optimizing cells in module \spm.
+Performed a total of 0 changes.
+
+6.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\CSADD'.
+Finding identical cells in module `\TCMP'.
+Finding identical cells in module `\spm'.
+Removed a total of 0 cells.
+
+6.6.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \CSADD..
+Finding unused cells or wires in module \TCMP..
+Finding unused cells or wires in module \spm..
+
+6.6.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module CSADD.
+Optimizing module TCMP.
+Optimizing module spm.
+
+6.6.8. Finished OPT passes. (There is nothing left to do.)
+
+6.7. Executing WREDUCE pass (reducing word size of cells).
+
+6.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \CSADD..
+Finding unused cells or wires in module \TCMP..
+Finding unused cells or wires in module \spm..
+
+6.9. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+6.10. Executing OPT pass (performing simple optimizations).
+
+6.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module CSADD.
+Optimizing module TCMP.
+Optimizing module spm.
+
+6.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\CSADD'.
+Finding identical cells in module `\TCMP'.
+Finding identical cells in module `\spm'.
+Removed a total of 0 cells.
+
+6.10.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \CSADD..
+Finding unused cells or wires in module \TCMP..
+Finding unused cells or wires in module \spm..
+
+6.10.4. Finished fast OPT passes.
+
+6.11. Printing statistics.
+
+=== CSADD ===
+
+   Number of wires:                 11
+   Number of wire bits:             11
+   Number of public wires:          10
+   Number of public wire bits:      10
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  7
+     $adff                           2
+     $and                            2
+     $xor                            3
+
+=== TCMP ===
+
+   Number of wires:                  7
+   Number of wire bits:              7
+   Number of public wires:           5
+   Number of public wire bits:       5
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     $adff                           2
+     $or                             1
+     $xor                            1
+
+=== spm ===
+
+   Number of wires:                 38
+   Number of wire bits:             99
+   Number of public wires:           6
+   Number of public wire bits:      67
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 64
+     $and                           32
+     CSADD                          31
+     TCMP                            1
+
+=== design hierarchy ===
+
+   spm                               1
+     CSADD                          31
+     TCMP                            1
+
+   Number of wires:                386
+   Number of wire bits:            447
+   Number of public wires:         321
+   Number of public wire bits:     382
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                253
+     $adff                          64
+     $and                           94
+     $or                             1
+     $xor                           94
+
+6.12. Executing CHECK pass (checking for obvious problems).
+Checking module CSADD...
+Checking module TCMP...
+Checking module spm...
+Found and reported 0 problems.
+
+7. Executing JSON backend.
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: 055ae1f513, CPU: user 0.02s system 0.01s, MEM: 10.18 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 23% 6x opt_expr (0 sec), 20% 5x opt_clean (0 sec), ...
