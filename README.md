@@ -79,4 +79,4 @@ TB_NAME = ten_file_testbench_cua_ban
 
 5. **Commit & Push** code lên nhánh chính của bạn, nghĩa là thay đổi nội dung bên trong các thư mục rồi lưu lại với commit change để workflow chạy.
 6. Sang tab **Actions** trên GitHub, đợi chạy xong, chọn action **SILK EDA - General Check** ở bên trái, bạn chọn lần gần nhất push thành công (tick xanh trên cùng) và kéo xuống để xem báo cáo.
-8. Workflow chỉ chạy khi phát hiện có sự thay đổi tại 1 trong các thư mục 'rtl', 'tb' hoặc config.txt. 
+8. Workflow chỉ chạy khi phát hiện có sự thay đổi tại bên trong các thư mục dự án, khi bạn cập nhật 1 dự án cụ thể, action sẽ chạy và tạo kết quả cho chính xác dự án đó. 
