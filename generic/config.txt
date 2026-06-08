@@ -1,2 +1,2 @@
-TOP_MODULE = array_mul_top
+TOP_MODULE = spm
 TB_NAME = 
