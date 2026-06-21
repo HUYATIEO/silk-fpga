@@ -4,6 +4,7 @@
 module top_module (
     input  wire       clk,
     input  wire       rst_n,
+    input  wire [7:0] SW,
     input       [1:0] KEY,    //nut nhan
     output wire       hsync,    // xung dong bo ngang
     output wire       vsync,    // xung dong bo doc
