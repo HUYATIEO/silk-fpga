@@ -57,7 +57,7 @@ module top_module (
   assign r = red;
   assign g = green;
   assign b = blue;
-  assign visible = video_active;
+  assign video_active = visivle;
 
   // =========================
   // Tham số màn hình / vật thể
