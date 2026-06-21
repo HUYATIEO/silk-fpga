@@ -1,7 +1,6 @@
 `default_nettype none
 `define COLOR_CYAN 3'd5
 `define FPGA_DEBUG
-
 module top_module (
     input  wire       clk,
     input  wire       rst_n,
@@ -28,7 +27,9 @@ module top_module (
 
   reg game_over_d;
 
-
+  // =========================
+  // FSM game
+  // =========================
   localparam S_IDLE      = 2'd0;
   localparam S_RUN       = 2'd1;
   localparam S_GAME_OVER = 2'd2;
@@ -38,7 +39,7 @@ module top_module (
   wire rst = ~rst_n;
   reg jump_req;
   wire jump_pulse = frame_tick && jump_req;
-
+  
   always @(posedge clk)
   begin
     if (rst)
@@ -54,10 +55,12 @@ module top_module (
 
   wire [1:0] red, green, blue;
 
+ 
   assign r = red;
   assign g = green;
   assign b = blue;
   assign video_active = visible;
+
 
   // =========================
   // Tham số màn hình / vật thể
@@ -106,7 +109,7 @@ module top_module (
     begin
       jump_btn_d <= SW[0];
 
-      if (SW[0] && !jump_btn_d) //bắt cạnh lên // xoa dau !
+      if (SW[0] && !jump_btn_d)
         jump_req <= 1'b1;
       else if (frame_tick)
         jump_req <= 1'b0;
@@ -219,7 +222,7 @@ module top_module (
             );
 
   // =========================
-  // FSM game
+  // Update state game theo frame
   // =========================
   always @(posedge clk)
   begin
@@ -244,7 +247,7 @@ module top_module (
         begin
           if (hit)
           begin
-            state <= S_RUN;
+            state <= S_GAME_OVER;
           end
           else
           begin
@@ -420,7 +423,7 @@ endmodule
 
 
 // ==========================================
-// module collision
+// Collision: AABB đơn giản
 // ==========================================
 module collision #(
     parameter DINO_W = 32,
@@ -453,10 +456,258 @@ module collision #(
 
 endmodule
 
+module sound_engine #(
+    parameter CLK_HZ = 25000000
+  )(
+    input  wire clk,
+    input  wire rst,
+    input  wire jump_pulse,
+    input  wire ko_start,
+    output reg  audio_out
+  );
 
+  // =========================
+  // Tạo tick 1ms
+  // =========================
+  localparam integer MS_DIV = CLK_HZ / 1000;
+
+  reg [31:0] ms_cnt;
+  reg tick_1ms;
+
+  always @(posedge clk)
+  begin
+    if (rst)
+    begin
+      ms_cnt   <= 0;
+      tick_1ms <= 1'b0;
+    end
+    else
+    begin
+      if (ms_cnt == MS_DIV - 1)
+      begin
+        ms_cnt   <= 0;
+        tick_1ms <= 1'b1;
+      end
+      else
+      begin
+        ms_cnt   <= ms_cnt + 1;
+        tick_1ms <= 1'b0;
+      end
+    end
+  end
+
+  // =========================
+  // Square-wave tone generator
+  // half_period = số clock cho nửa chu kỳ
+  // =========================
+  reg [31:0] half_period;
+  reg [31:0] tone_cnt;
+  reg tone_enable;
+
+  always @(posedge clk)
+  begin
+    if (rst)
+    begin
+      tone_cnt   <= 0;
+      audio_out  <= 1'b0;
+    end
+    else if (!tone_enable || half_period == 0)
+    begin
+      tone_cnt   <= 0;
+      audio_out  <= 1'b0;
+    end
+    else
+    begin
+      if (tone_cnt >= half_period - 1)
+      begin
+        tone_cnt  <= 0;
+        audio_out <= ~audio_out;
+      end
+      else
+      begin
+        tone_cnt <= tone_cnt + 1;
+      end
+    end
+  end
+
+  // =========================
+  // Note table (25MHz clock)
+  // half_period ~= CLK_HZ / (2*f)
+  // =========================
+  localparam [31:0] NOTE_C5 = 47778; // ~261 Hz
+  localparam [31:0] NOTE_E5 = 37879; // ~330 Hz
+  localparam [31:0] NOTE_G5 = 31888; // ~392 Hz
+  localparam [31:0] NOTE_A5 = 28409; // ~440 Hz
+  localparam [31:0] NOTE_B5 = 25310; // ~494 Hz
+  localparam [31:0] NOTE_C6 = 23889; // ~523 Hz
+  localparam [31:0] NOTE_D6 = 21284; // ~587 Hz
+  localparam [31:0] NOTE_E6 = 18939; // ~660 Hz
+
+  // =========================
+  // Bộ phát hiệu ứng
+  // mode:
+  // 0 = idle
+  // 1 = jump beep
+  // 2 = KO jingle
+  // =========================
+  reg [1:0] mode;
+  reg [7:0] step_idx;
+  reg [15:0] step_ms;
+  reg ko_busy;
+
+  localparam MODE_IDLE = 2'd0;
+  localparam MODE_JUMP = 2'd1;
+  localparam MODE_KO   = 2'd2;
+
+  always @(posedge clk)
+  begin
+    if (rst)
+    begin
+      mode        <= MODE_IDLE;
+      step_idx    <= 0;
+      step_ms     <= 0;
+      tone_enable <= 1'b0;
+      half_period <= 0;
+      ko_busy     <= 1'b0;
+    end
+    else
+    begin
+      // Ưu tiên KO hơn jump
+      if (ko_start && !ko_busy)
+      begin
+        mode        <= MODE_KO;
+        step_idx    <= 0;
+        step_ms     <= 0;
+        tone_enable <= 1'b1;
+        half_period <= NOTE_A5;
+        ko_busy     <= 1'b1;
+      end
+      else if (jump_pulse && mode == MODE_IDLE)
+      begin
+        mode        <= MODE_JUMP;
+        step_idx    <= 0;
+        step_ms     <= 0;
+        tone_enable <= 1'b1;
+        half_period <= NOTE_E6;
+      end
+
+      if (tick_1ms)
+      begin
+        case (mode)
+          MODE_IDLE:
+          begin
+            tone_enable <= 1'b0;
+            half_period <= 0;
+          end
+
+          // Jump: 1 tiếng tít 60ms
+          MODE_JUMP:
+          begin
+            if (step_ms >= 16'd60)
+            begin
+              mode        <= MODE_IDLE;
+              step_ms     <= 0;
+              tone_enable <= 1'b0;
+              half_period <= 0;
+            end
+            else
+            begin
+              step_ms <= step_ms + 1;
+            end
+          end
+
+          // KO jingle nguyên bản 4 nốt
+          // A5 (120ms), G5 (120ms), E5 (180ms), C5 (240ms)
+          MODE_KO:
+          begin
+            step_ms <= step_ms + 1;
+
+            case (step_idx)
+              0:
+              begin
+                tone_enable <= 1'b1;
+                half_period <= NOTE_A5;
+                if (step_ms >= 16'd120)
+                begin
+                  step_idx <= 1;
+                  step_ms  <= 0;
+                end
+              end
+
+              1:
+              begin
+                tone_enable <= 1'b1;
+                half_period <= NOTE_G5;
+                if (step_ms >= 16'd120)
+                begin
+                  step_idx <= 2;
+                  step_ms  <= 0;
+                end
+              end
+
+              2:
+              begin
+                tone_enable <= 1'b1;
+                half_period <= NOTE_E5;
+                if (step_ms >= 16'd180)
+                begin
+                  step_idx <= 3;
+                  step_ms  <= 0;
+                end
+              end
+
+              3:
+              begin
+                tone_enable <= 1'b1;
+                half_period <= NOTE_C5;
+                if (step_ms >= 16'd240)
+                begin
+                  step_idx <= 4;
+                  step_ms  <= 0;
+                end
+              end
+
+              4:
+              begin
+                tone_enable <= 1'b0;
+                half_period <= 0;
+                if (step_ms >= 16'd80)
+                begin
+                  mode     <= MODE_IDLE;
+                  step_idx <= 0;
+                  step_ms  <= 0;
+                  ko_busy  <= 1'b0;
+                end
+              end
+
+              default:
+              begin
+                mode        <= MODE_IDLE;
+                step_idx    <= 0;
+                step_ms     <= 0;
+                tone_enable <= 1'b0;
+                half_period <= 0;
+                ko_busy     <= 1'b0;
+              end
+            endcase
+          end
+
+          default:
+          begin
+            mode        <= MODE_IDLE;
+            tone_enable <= 1'b0;
+            half_period <= 0;
+            ko_busy     <= 1'b0;
+          end
+        endcase
+      end
+    end
+  end
+
+endmodule
 
 // ==========================================
-// module renderer
+// Renderer: nền trắng, dino bitmap, cactus bitmap, KO khi game over
 // ==========================================
 module renderer #(
     parameter GROUND_Y = 440,
@@ -511,7 +762,7 @@ module renderer #(
        (pixel_x >= dino_x) && (pixel_x < dino_x + DINO_W) &&
        (pixel_y >= dino_y) && (pixel_y < dino_y + DINO_H);
 
-  wire [9:0] local_x_full = pixel_x + dino_x;
+  wire [9:0] local_x_full = pixel_x - dino_x;
   wire [9:0] local_y_full = pixel_y - dino_y;
   wire [4:0] local_x = local_x_full[4:0];
   wire [4:0] local_y = local_y_full[4:0];
@@ -931,7 +1182,7 @@ module renderer #(
 
 endmodule
 // ==========================================
-// module hvsync_generator
+// VGA HVSYNC Generator (640x480 @ 60Hz, 25MHz Clock)
 // ==========================================
 module hvsync_generator (
     input  wire clk,
@@ -975,14 +1226,14 @@ module hvsync_generator (
         end
     end
 
-    
+    // Tạo xung đồng bộ (Active Low chuẩn cho các DAC màn hình)
     assign hsync = ~(h_count >= (H_DISPLAY + H_FRONT_PORCH) && h_count < (H_DISPLAY + H_FRONT_PORCH + H_SYNC_PULSE));
     assign vsync = ~(v_count >= (V_DISPLAY + V_FRONT_PORCH) && v_count < (V_DISPLAY + V_FRONT_PORCH + V_SYNC_PULSE));
     
-    
+    // Tín hiệu Visible (chỉ vẽ hình khi đang ở vùng hiển thị)
     assign display_on = (h_count < H_DISPLAY) && (v_count < V_DISPLAY);
     
-    
+    // Đẩy tọa độ ra cho Renderer xử lý hình ảnh
     assign hpos = h_count;
     assign vpos = v_count;
     
