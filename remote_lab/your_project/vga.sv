@@ -1,6 +1,7 @@
 `default_nettype none
 `define COLOR_CYAN 3'd5
 `define FPGA_DEBUG
+
 module top_module (
     input  wire       clk,
     input  wire       rst_n,
