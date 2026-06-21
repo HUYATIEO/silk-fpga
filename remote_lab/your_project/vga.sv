@@ -4,7 +4,7 @@
 module top_module (
     input  wire       clk,
     input  wire       rst_n,
-    input  wire [7:0] SW,       // 8 switch control
+    input       [1:0] KEY,    //nut nhan
     output wire       hsync,    // xung dong bo ngang
     output wire       vsync,    // xung dong bo doc
     output reg  [1:0] r,      // 2-bit red
@@ -107,9 +107,9 @@ module top_module (
     end
     else
     begin
-      jump_btn_d <= SW[0];
+      jump_btn_d <= KEY[0];
 
-      if (SW[0] && !jump_btn_d)
+        if (KEY[0] && !jump_btn_d)
         jump_req <= 1'b1;
       else if (frame_tick)
         jump_req <= 1'b0;
