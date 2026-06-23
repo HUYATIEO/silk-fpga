@@ -41,5 +41,5 @@ generate
         assign sum[l] =  p[l] ^ c[l];
     end 
 endgenerate
-    //nothing to comment
+    
 endmodule
